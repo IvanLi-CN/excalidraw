@@ -1,6 +1,6 @@
 {
   "name": "@excalidraw/excalidraw",
-  "version": "0.17.1",
+  "version": "0.17.1-unworld",
   "main": "./dist/prod/index.js",
   "type": "module",
   "module": "./dist/prod/index.js",
@@ -9,6 +9,16 @@
       "development": "./dist/dev/index.js",
       "types": "./dist/excalidraw/index.d.ts",
       "default": "./dist/prod/index.js"
+    },
+    "./types": {
+      "development": "./dist/dev/types.js",
+      "types": "./dist/excalidraw/types.d.ts",
+      "default": "./dist/prod/types.js"
+    },
+    "./element/types": {
+      "development": "./dist/dev/element/types.js",
+      "types": "./dist/excalidraw/element/types.d.ts",
+      "default": "./dist/prod/element/types.js"
     },
     "./index.css": {
       "development": "./dist/dev/index.css",

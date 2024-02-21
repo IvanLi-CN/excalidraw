@@ -41,8 +41,10 @@ export const exportToCanvas = ({
   getDimensions,
   exportPadding,
   exportingFrame,
+  canvas,
 }: ExportOpts & {
   exportPadding?: number;
+  canvas?: HTMLCanvasElement;
 }) => {
   const { elements: restoredElements, appState: restoredAppState } = restore(
     { elements, appState },
@@ -56,7 +58,7 @@ export const exportToCanvas = ({
     files || {},
     { exportBackground, exportPadding, viewBackgroundColor, exportingFrame },
     (width: number, height: number) => {
-      const canvas = document.createElement("canvas");
+      canvas = canvas ?? document.createElement("canvas");
 
       if (maxWidthOrHeight) {
         if (typeof getDimensions === "function") {
