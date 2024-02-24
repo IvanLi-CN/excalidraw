@@ -15,6 +15,7 @@ import { AppState } from "../types";
 import { Assert, SameType } from "../utility-types";
 import { randomInteger } from "../random";
 import { toBrandedType } from "../utils";
+import { elementWithCanvasCache } from "../renderer/renderElement";
 
 type ElementIdKey = InstanceType<typeof LinearElementEditor>["elementId"];
 type ElementKey = ExcalidrawElement | ElementIdKey;
@@ -263,6 +264,42 @@ class Scene {
         ? nextElements
         : Array.from(nextElements.values());
     const nextFrameLikes: ExcalidrawFrameLikeElement[] = [];
+
+    for (const element of this.elements) {
+      const old = this.elementsMap.has(element.id)
+        ? this.elementsMap.get(element.id)
+        : null;
+
+      if (!old) {
+        continue;
+      }
+      if (
+        old.version < element.version ||
+        (old.version === element.version &&
+          old.versionNonce !== element.versionNonce)
+      ) {
+        if (elementWithCanvasCache.has(element)) {
+          const elementWithCanvas = elementWithCanvasCache.get(element)!;
+          elementWithCanvas.canvas.height = 0;
+          elementWithCanvas.canvas.width = 0;
+          elementWithCanvasCache.delete(element);
+        }
+      }
+    }
+
+    for (const element of this.elementsMap.values()) {
+      const next = this.elements.find((e) => e.id === element.id);
+
+      if (!next || next.isDeleted) {
+        if (elementWithCanvasCache.has(element)) {
+          const elementWithCanvas = elementWithCanvasCache.get(element)!;
+          elementWithCanvas.canvas.height = 0;
+          elementWithCanvas.canvas.width = 0;
+          elementWithCanvasCache.delete(element);
+        }
+      }
+    }
+
     this.elementsMap.clear();
     this.elements.forEach((element) => {
       if (isFrameLikeElement(element)) {

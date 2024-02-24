@@ -33,8 +33,9 @@ export class ShapeCache {
       : Drawable,
   ) => ShapeCache.cache.set(element, shape);
 
-  public static delete = (element: ExcalidrawElement) =>
+  public static delete = (element: ExcalidrawElement) => {
     ShapeCache.cache.delete(element);
+  };
 
   public static destroy = () => {
     ShapeCache.cache = new WeakMap();
@@ -65,6 +66,11 @@ export class ShapeCache {
       return cachedShape;
     }
 
+    if (elementWithCanvasCache.has(element)) {
+      const elementWithCanvas = elementWithCanvasCache.get(element)!;
+      elementWithCanvas.canvas.height = 0;
+      elementWithCanvas.canvas.width = 0;
+    }
     elementWithCanvasCache.delete(element);
 
     const shape = _generateElementShape(

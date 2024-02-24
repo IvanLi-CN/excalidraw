@@ -405,7 +405,10 @@ import { AnimationFrameHandler } from "../animation-frame-handler";
 import { AnimatedTrail } from "../animated-trail";
 import { LaserTrails } from "../laser-trails";
 import { withBatchedUpdates, withBatchedUpdatesThrottled } from "../reactUtils";
-import { getRenderOpacity } from "../renderer/renderElement";
+import {
+  elementWithCanvasCache,
+  getRenderOpacity,
+} from "../renderer/renderElement";
 import { textWysiwyg } from "../element/textWysiwyg";
 import { isOverScrollBars } from "../scene/scrollbars";
 import {
@@ -2451,6 +2454,14 @@ class App extends React.Component<AppProps, AppState> {
 
   public componentWillUnmount() {
     this.renderer.destroy();
+    this.getSceneElementsIncludingDeleted().forEach((element) => {
+      if (elementWithCanvasCache.has(element)) {
+        const elementWithCanvas = elementWithCanvasCache.get(element)!;
+        elementWithCanvas.canvas.height = 0;
+        elementWithCanvas.canvas.width = 0;
+        elementWithCanvasCache.delete(element);
+      }
+    });
     this.scene = new Scene();
     this.renderer = new Renderer(this.scene);
     this.files = {};
@@ -2470,6 +2481,12 @@ class App extends React.Component<AppProps, AppState> {
     selectGroupsForSelectedElements.clearCache();
     touchTimeout = 0;
     document.documentElement.style.overscrollBehaviorX = "";
+    this.canvas.height = 0;
+    this.canvas.width = 0;
+    if (this.interactiveCanvas) {
+      this.interactiveCanvas.height = 0;
+      this.interactiveCanvas.width = 0;
+    }
   }
 
   private onResize = withBatchedUpdates(() => {

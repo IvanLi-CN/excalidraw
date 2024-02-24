@@ -136,7 +136,7 @@
   "scripts": {
     "gen:types": "rm -rf types && tsc",
     "build:esm": "rm -rf dist && node ../../scripts/buildPackage.js && yarn gen:types",
-    "pack": "yarn build:umd && yarn pack",
+    "pack": "yarn build:esm && yarn pack",
     "start": "node ../../scripts/buildExample.mjs && vite",
     "build:example": "node ../../scripts/buildExample.mjs",
     "size": "yarn build:umd && size-limit"
